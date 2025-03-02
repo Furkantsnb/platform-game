@@ -1,34 +1,73 @@
-🚀 Konsol kahramanı🪐
-"Karakter büyük bir mücadele veriyor peki neden?"
+# Platform Oyunu
 
-Hoş geldiniz, kahraman! konsol karakterim senin için hayatta kalmaya çalıyor onun bu mücadelesi görmezden gelme ve sende ona ayrdım ett hadi başlayalım. dikkatli ol zombiler her zaman seni öldürmek için ikinci bir plan kurmuştur puanın 5 oldukdan sonra bombalara dikkat et
+## 🎮 Oyun Hakkında
+Bu proje, Pygame Zero kullanılarak geliştirilmiş eğlenceli bir platform oyunudur. Oyuncular karakterlerini kontrol ederek düşman engellerinden kaçmalı, kalpleri toplamalı ve hayatta kalmaya çalışmalıdır.
 
-🎮 Nasıl Oynanır?
-Kontroller:
-kalayveden w-a-s-d tuşları ile karakteri yönlendirebilirsin
-space tuşu ile zıpla
-farenin sol tıkı ile ateş et
-Amaç:
-Mümkün olduğunca uzun süre hayatta kalın.
-bombalr ve düşmanlar arasından yolunuzu açın.
-Puanınızı artırarak liderlik tablosunda yerinizi alın.
-🛠️ Özellikler
-Görsel Efektler ve Sesler: kılıçlar ve epik bir arka plan müziği eşliğinde platformun tadını çıkarın.
-Oyun Modları:
-Menü: oyuna başla eya oyunu bitir
-Oyun: Aksiyon başlasın!
+## 🎯 Özellikler
+- Dinamik karakter kontrolü
+- Düşman karakterler
+- Puan toplama sistemi
+- Ses efektleri
+- Bomba engelleri
+- Kılıç saldırı sistemi
+- Animasyonlu patlamalar
+- Ana menü sistemi
 
-🖥️ Gereksinimler
-Oyunu çalıştırmak için aşağıdaki gereksinimlere ihtiyacınız var:
+## 🔧 Gereksinimler
+- Python 3.x
+- Pygame Zero
 
-Python 3.11 veya daha üstü
-Pgzero: Eğer sisteminizde yüklü değilse, aşağıdaki komutla yükleyebilirsiniz:
+## ⚙️ Kurulum
+1. Repoyu klonlayın:
+```bash
+git clone [repo-url]
+```
+
+2. Gerekli kütüphaneleri yükleyin:
+```bash
 pip install pgzero
-🤩 Kurulum ve Çalıştırma
-Bu projeyi bilgisayarınıza indirin.
-Gereksinimlerinizi yükleyin (Python ve Pgzero).
-Oyunu başlatmak için şu komutu çalıştırın:
-pgzrun main.py
+```
+
+3. Oyunu çalıştırın:
+```bash
+python main.py
+```
+
+## 🎮 Kontroller
+- **Sağa hareket**: Sağ ok tuşu veya D
+- **Sola hareket**: Sol ok tuşu veya A
+- **Zıplama**: Yukarı ok tuşu, W veya Space
+- **Eğilme**: Aşağı ok tuşu veya S
+- **Saldırı**: Sol tık
+- **Ses açma/kapama**: Sağ üst köşedeki ses butonu
+
+## 🎯 Oyun Amacı
+- Karakterinizi kontrol ederek düşmanlardan kaçın
+- Kalpleri toplayarak puan kazanın
+- 10 puana ulaşarak oyunu kazanın
+- Düşmanlara kılıcınızla saldırabilirsiniz
+- Bombalardan kaçının
+
+## ⚠️ Önemli Notlar
+- 5 puan sonrası bombalar aktif olur
+- Düşmanlarla veya bombalarla temas oyunu bitirir
+- Her kalp 1 puan değerindedir
+
+## 🎨 Görsel ve Ses Varlıkları
+Oyun aşağıdaki görsel ve ses öğelerini içerir:
+- Karakter animasyonları
+- Patlama efektleri
+- Arka plan müziği
+- Adım sesleri
+- Patlama sesleri
+- Kalp toplama sesleri
+
+## 🤝 Katkıda Bulunma
+1. Bu repoyu fork edin
+2. Yeni bir branch oluşturun (`git checkout -b yenilik`)
+3. Değişikliklerinizi commit edin (`git commit -am 'Yeni özellik eklendi'`)
+4. Branch'inizi push edin (`git push origin yenilik`)
+5. Pull Request oluşturun
 
 
 🎉 Teşekkürler!
