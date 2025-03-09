@@ -2,6 +2,7 @@ import pgzrun
 from pgzero.builtins import Actor, keyboard, Rect
 import time
 import random
+import math
 
 WIDTH = 600
 HEIGHT = 300
@@ -14,7 +15,9 @@ background = Actor("background.jpg")
 karakter = Actor("stand", (50,200))
 #dusman_1 = Actor("animateright_0", (650,200))
 
-
+# Yeni animasyon zamanlayıcıları
+stand_animation_timer = 0
+stand_animation_duration = 1.5  # Animasyon süresi (saniye)
 
 sound_on = True
 mod = "menu"
@@ -35,7 +38,6 @@ explosion_frames = [
     "animateright_3",
     "animateright_4",
     "animateright_5",
-    
 ]
 explosions = []
 
@@ -66,15 +68,37 @@ class Enemy(Actor):
     def __init__(self, image, position, speed):
         super().__init__(image, position)
         self.speed = speed
+        self.animation_timer = random.random() * 2  # Rastgele başlangıç zamanı
+        self.animation_duration = 1.5  # Animasyon süresi
+        self.base_y = position[1]  # Orijinal y pozisyonu
+        
+    def animate_idle(self):
+        # Nefes alma animasyonu için zamanlayıcıyı güncelle
+        self.animation_timer += 0.05
+        if self.animation_timer > self.animation_duration:
+            self.animation_timer = 0
+            
+        # Sinüs dalgası kullanarak nefes alma efekti
+        progress = self.animation_timer / self.animation_duration
+        scale_factor = 1.0 + 0.04 * math.sin(progress * 2 * math.pi)
+        y_offset = 2 * math.sin(progress * 2 * math.pi)
+        
+        # Düşmanın ölçeğini ve y-pozisyonunu güncelle
+        self.scale = scale_factor
+        self.y = self.base_y + y_offset
 
     def move(self):
+        # Idle animasyonu uygula
+        self.animate_idle()
+        
         if self.x > -20:
             self.x -= self.speed
         else:
             self.reset_position()
 
     def reset_position(self):
-        self.y = 200
+        self.base_y = 200
+        self.y = self.base_y
         self.x = random.randint(600, 900)
         self.speed = random.randint(1, 3)
     
@@ -104,6 +128,7 @@ def create_bombs(count):
         y = random.randint(-450, -50)
         speed = random.randint(2, 8)
         bombs.append(Bomb("bomb", (x, y), speed))
+
 def create_enemys(count):
     for _ in range(count):
         x = random.randint(600, 900)
@@ -126,6 +151,7 @@ def move_enemy_bomb():
 def move_enemy():
     for enemy in enemys[:]:
         enemy.move()
+        
 def move_heart():
     for heart in hearts[:]:
         heart.move()
@@ -164,14 +190,10 @@ def draw():
         screen.draw.text("KAZANDINIZ :)", center=(300,150), color="red", fontsize=36)
 
 def sword_move():
-    
     for i in range(len(swords)):
         if swords[i].x >= karakter.x:
             swords[i].x += 5
             swords[i].image = "swordright"
-    
-        
-
 
 
 def collisions():
@@ -199,6 +221,7 @@ def combat_bomb():
         if karakter.colliderect(bombs[i]):
             play_bombs_sound()
             mod = "and"
+            
 def combat_heart():
     global mod
     global puan
@@ -211,9 +234,27 @@ def combat_heart():
             break
             
 def idle_animation():
+    if mod == "game" and (karakter.image == "stand" or karakter.image == "duck"): 
+        animate(karakter, tween="sine_in_out", duration=0.8, y=karakter.y - 5)  
+        clock.schedule_unique(lambda: animate(karakter, tween="sine_in_out", duration=0.8, y=karakter.y + 5), 0.8)
+
+def karakter_idle_animation():
+    global stand_animation_timer
+    
     if mod == "game" and karakter.image == "stand":
-        animate(karakter, tween="bounce_end", duration=0.5, y=karakter.y - 10) 
-        clock.schedule_unique(lambda: animate(karakter, tween="bounce_end", duration=0.5, y=karakter.y + 10), 0.5)  
+        # Nefes alma animasyonu için ölçeklendirme ve yükseklik ayarı
+        progress = (time.time() - stand_animation_timer) / stand_animation_duration
+        if progress > 1:
+            stand_animation_timer = time.time()
+            progress = 0
+            
+        # Sinüs dalgası kullanarak nefes alma efekti oluştur
+        scale_factor = 1.0 + 0.05 * math.sin(progress * 2 * math.pi)
+        y_offset = 2 * math.sin(progress * 2 * math.pi)
+        
+        # Karakterin ölçeğini ve y-pozisyonunu güncelle
+        karakter.scale = scale_factor
+        karakter.y = 200 + y_offset
 
 
 def update(dt):
@@ -222,7 +263,14 @@ def update(dt):
     global footstep_timer  
     global bomb_timer
     global mod 
+    
+    if mod == "game" and karakter.image == "stand":
+        karakter_idle_animation()  # Her karede çağrılacak
+        
     if mod == "game":
+        if sound_on and sounds.birds.get_num_channels() == 0:
+         sounds.birds.play(-1)
+
         if puan >= 5:
             move_enemy_bomb()
         if puan == 10:
@@ -233,8 +281,6 @@ def update(dt):
         move_enemy()
         combat_heart()
         collisions()
-        # animate_move_1()
-        #combat_animate()        
         
         if (keyboard.left or keyboard.a) and karakter.x > 0:
             karakter.x -= 5
@@ -251,6 +297,7 @@ def update(dt):
             animate(karakter, tween="bounce_end", duration=1, y=200) 
         else:
             karakter.image = "stand"
+            karakter.scale = 1.0  # Ölçeği sıfırla
             sounds.grass.stop()
 
     
@@ -259,10 +306,6 @@ def update(dt):
             footstep_timer = 0
         for explosion in explosions:
             explosion.update()
-        
-        #if karakter.colliderect(dusman_1) :
-        #   mod = "and"
-
 
 
 def play_footstep_sound():
@@ -270,11 +313,13 @@ def play_footstep_sound():
     if footstep_timer == 0:  
         sounds.grass.play()
         footstep_timer = time.time()  
+        
 def play_bombs_sound():
     global bomb_timer
     if bomb_timer == 0:  
         sounds.bombvoice.play()
         bomb_timer = time.time()  
+        
 def play_hearts_sound():
     global heart_timer
     if bomb_timer == 0:  
@@ -300,7 +345,6 @@ def on_mouse_down(button, pos):
         sword = Actor("swordright")
         sword.pos = karakter.pos
         swords.append(sword)
-
         
         if pos[0] < karakter.x:  
             sword.image = "sword"
